@@ -1,0 +1,114 @@
+html, 
+body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-image: url("imagenes/fondo-marino.jpg");
+    background-position: 0 0;
+    background-repeat: repeat-x;
+    height: 100%;
+    width: 100%;
+    color: white;
+}
+
+header {
+    text-align: center;
+    
+}
+
+ul {
+    list-style: none;
+}
+
+.game-intro {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+}
+
+.game-intro > section:first-child {
+    margin-left: 100px;
+}
+
+#jugador {
+    
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+    width: fit-content;
+}
+
+#instrucciones {
+    border: 1px solid yellow;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+
+#recursos {
+    border: 1px solid yellow;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+}
+
+#obstaculos {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid yellow;
+}
+
+#recursos > ul > li > img {
+    display: flex;
+    flex-direction: column;
+    height: 70px;
+    width: 70px;
+}
+
+#obstaculos > ul > li > img {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    height: 70px;
+    width: 70px;
+
+}
+
+#game-board {
+    display: none;
+    border: 1px solid black;
+}
+
+#recursos > ul> li {
+    display: flex;
+    align-items: center;
+    padding-right: 20px;
+    padding-left: 0;
+
+}
+
+#obstaculos > ul> li {
+    display: flex;
+    align-items: center;
+    padding-right: 20px;
+    padding-left: 0;
+}
+
+footer {
+    text-align: center;
+}
+
+#iniciar-juego {
+    border: 2px solid red;
+    background-color: yellow; 
+    padding: 10px 20px;
+}
+
+
+

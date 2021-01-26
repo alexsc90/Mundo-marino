@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="index.css" />
+    <title>Mundo Marino</title>
+</head>
+
+<body>
+    <div id="fondo">
+    <div>
+    
+        <header>
+        <h1>Mundo Marino</h1>
+        <img src="imagenes/buzo.gif" id="jugador" />
+        </header>
+
+    </div>
+
+    
+
+    <div class="game-intro">
+    
+    
+    
+    <section id="recursos">
+            <h3>Recursos</h3>
+            <ul>
+                <li><img src="./imagenes/tanque.png" class="elementos"/>Obtén más oxígeno.</li>
+                <li><img src="./imagenes/shield.jpg.png" />Prótegete!</li>
+                <li><img src="./imagenes/starfish.png" />Acelera el paso.</li>
+            </ul>
+            </section>
+
+            <section id="instrucciones">
+                <h3>Instrucciones</h3>
+                <p>Utiliza las flechas del teclado para dirigir a tu buzo,<br>
+                sorteando los obstáculos y utilizando los recursos para evitar<br>
+                quedarte sin oxígeno</p>
+                </section>
+
+        <section id="obstaculos">
+            <h3>Obstáculos</h3>
+            <ul>
+                <li><img src="./imagenes/madera.png" />Reduce tu oxígeno un 10%</li>
+                <li><img src="./imagenes/red.jpg.png" />Reduce tu oxígeno un 25%</li>
+                <li><img src="./imagenes/medusa.png" />Reduce tu oxígeno un 50%</li>
+                <li><img src="./imagenes/shark.jpg.png" />Si te atrapa, será tu fin.</li>
+            </ul>
+        </section>
+
+    </div>
+    <div>
+    <footer>
+        <button id="iniciar-juego">JUEGA AHORA</button>
+    </footer>
+</div>
+    </div>
+
+    <div id="game-board">
+        <canvas id="canvas" width="1300" height="655"></canvas>
+      </div>
+
+    
+<script type="text/javascript" src="index.js"></script>
+</body>
+</html>
