@@ -6,11 +6,17 @@ btn.addEventListener('click', () => {
     fondo.style.display = 'none'
     board.style.display = 'flex'
     board.style.position = 'relative'
+    myGameArea.start();
+
 })
 
-const myObstaclesTronco = [];
-const myObstaclesMedusa = [];
+let myObstaclesTronco = [];
+let myObstaclesMedusa = [];
+let myObstaclesAncla = [];
 let myitemTank = [];
+let myObstaclesShark = [];
+let myItemShield = [];
+let shieldTime = 0;
 // Iniciar el area de Juego con Fondo
 const imgRaw = new Image();
 imgRaw.src = "./imagenes/fondo-marino.jpg";
@@ -114,6 +120,12 @@ class Diver extends Component {
     increaseLive() {
         this.life += 10;
     }
+    reduceLiveByImpact(percentage) {
+        this.life = Math.ceil(this.life * percentage);
+    }
+    changeImage(image) {
+        this.diverImg = image;
+    }
     draw() {
         let ctx = myGameArea.context;
         ctx.drawImage(this.diverImg, this.x, this.y, this.width, this.height);
@@ -139,28 +151,29 @@ class Diver extends Component {
         }
     }
 }
-const player = new Diver(100, 70, "./imagenes/buzo.png", 300, 300);
+const player = new Diver(100, 50, "./imagenes/buzo.png", 300, 300);
 function updateGameArea() {
     myGameArea.move();
     myGameArea.clear();
     myGameArea.draw();
     // update the player's position before drawing
     player.newPos();
-    player.reduceLive();
     player.draw();
     // update the obstacles array
     updateObstaclesTronco();
     updateObstaclesMedusa();
+    upadateObstaclesShark();
+    updateObstaclesAncla()
+    updateItemShield();
     updateItemTank();
-    // updateItems();
     // check if the game should stop
-    // checkItems();
+    player.reduceLive();
+    myGameArea.life(player.life);
     checkGameOver();
     // update and draw the score
     myGameArea.score();
-    myGameArea.life(player.life);
 }
-myGameArea.start();
+
 document.onkeydown = function (e) {
     switch (e.keyCode) {
         case 38: // up arrow
@@ -181,71 +194,176 @@ document.onkeyup = function (e) {
     player.speedX = 0;
     player.speedY = 0;
 };
+// Funcion de Obstaculos
 function updateObstaclesTronco() {
-    for (i = 0; i < myObstaclesTronco.length; i++) {
-        myObstaclesTronco[i].x += -1;
-        myObstaclesTronco[i].update();
-    }
-    // constructor(width, height, img, x, y) {
-    myGameArea.frames += 1;
-    if (myGameArea.frames % 300 === 0) {
-        let x = myGameArea.canvas.width;
-        let y = myGameArea.canvas.height;
-        let randomHeight = Math.floor(Math.random() * (y - 50)) + 50;
-        myObstaclesTronco.push(new Component(120, 60, "./imagenes/tronco.png", x, randomHeight));
+    const crashedTronco = myObstaclesTronco.some(function (obstacle) {
+        return player.crashWith(obstacle);
+    });
+    if (crashedTronco && shieldTime===0) {
+        player.reduceLiveByImpact(0.9);
+        let filter = myObstaclesTronco.filter(function (obstacle) {
+            return player.crashWith(obstacle);
+        });
+        let index = myObstaclesTronco.indexOf(filter[0]);
+        myObstaclesTronco.splice(index, 1);
+    } else {
+        for (i = 0; i < myObstaclesTronco.length; i++) {
+            myObstaclesTronco[i].x += -1;
+            myObstaclesTronco[i].update();
+        }
+        // constructor(width, height, img, x, y) {
+        myGameArea.frames += 1;
+        if (myGameArea.frames % 300 === 0) {
+            let x = myGameArea.canvas.width;
+            let y = myGameArea.canvas.height;
+            let randomHeight = Math.floor(Math.random() * (y - 50)) + 50;
+            myObstaclesTronco.push(new Component(120, 60, "./imagenes/tronco.png", x, randomHeight));
+        }
     }
 }
 function updateObstaclesMedusa() {
-    for (i = 0; i < myObstaclesTronco.length; i++) {
-        myObstaclesMedusa[i].y += -1;
-        myObstaclesMedusa[i].update();
-    }
-    // constructor(width, height, img, x, y) {
-    if (myGameArea.frames % 200 === 0) {
-        let x = myGameArea.canvas.width;
-        let y = myGameArea.canvas.height;
-        let randomHeight = Math.floor(Math.random() * (x - 50)) + 50;
-        myObstaclesMedusa.push(new Component(80, 60, "./imagenes/medusa.png", randomHeight, y));
+    const crashedMedusa = myObstaclesMedusa.some(function (obstacle) {
+        return player.crashWith(obstacle);
+    });
+    if (crashedMedusa && shieldTime===0) {
+        player.reduceLiveByImpact(0.5);
+        let filter = myObstaclesMedusa.filter(function (obstacle) {
+            return player.crashWith(obstacle);
+        });
+        let index = myObstaclesMedusa.indexOf(filter[0]);
+        myObstaclesMedusa.splice(index, 1);
+    } else {
+        for (i = 0; i < myObstaclesMedusa.length; i++) {
+            myObstaclesMedusa[i].y += -1;
+            myObstaclesMedusa[i].update();
+        }
+        // constructor(width, height, img, x, y) {
+        if (myGameArea.frames % 1000 === 0) {
+            let x = myGameArea.canvas.width;
+            let y = myGameArea.canvas.height;
+            let randomHeight = Math.floor(Math.random() * (x - 50)) + 50;
+            myObstaclesMedusa.push(new Component(60, 80, "./imagenes/medusa.png", randomHeight, y));
+        }
     }
 }
+function upadateObstaclesShark() {
+    for (i = 0; i < myObstaclesShark.length; i++) {
+        myObstaclesShark[i].x += 1;
+        myObstaclesShark[i].update();
+    }
+    // constructor(width, height, img, x, y) {
+    if (myGameArea.frames % 1500 === 0) {
+        let x = myGameArea.canvas.width;
+        let y = myGameArea.canvas.height;
+        let randomHeight = Math.floor(Math.random() * (y - 200)) + 50;
+        myObstaclesShark.push(new Component(400, 150, "./imagenes/shark.png", -400, randomHeight));
+    }
+}
+function updateObstaclesAncla() {
+    const crashedAncla = myObstaclesAncla.some(function (obstacle) {
+        return player.crashWith(obstacle);
+    });
+    if (crashedAncla && shieldTime===0) {
+        player.reduceLiveByImpact(0.75);
+        let filter = myObstaclesAncla.filter(function (obstacle) {
+            return player.crashWith(obstacle);
+        });
+        let index = myObstaclesAncla.indexOf(filter[0]);
+        myObstaclesAncla.splice(index, 1);
+    } else {
+        for (i = 0; i < myObstaclesAncla.length; i++) {
+            myObstaclesAncla[i].y += 1;
+            myObstaclesAncla[i].update();
+        }
+        // constructor(width, height, img, x, y) {
+        if (myGameArea.frames % 750 === 0) {
+            let x = myGameArea.canvas.width;
+            let y = myGameArea.canvas.height;
+            let randomHeight = Math.floor(Math.random() * (x - 50)) + 50;
+            myObstaclesAncla.push(new Component(50, 60, "./imagenes/ancla.png", randomHeight, -60));
+        }
+    }
+}
+// CREAR ITEMS QUE MEJOREN EL PERFORMANCE DEL JUGADOR
 function updateItemTank() {
     const crashedItemLife = myitemTank.some(function (obstacle) {
         return player.crashWith(obstacle);
     });
     if (crashedItemLife) {
         player.increaseLive();
-        myitemTank = [];
-        return;
+        let filter = myitemTank.filter(function (obstacle) {
+            return player.crashWith(obstacle);
+        });
+        let index = myitemTank.indexOf(filter[0]);
+        myitemTank.splice(index, 1);
     } else {
         for (i = 0; i < myitemTank.length; i++) {
             myitemTank[i].y += -1;
             myitemTank[i].update();
         }
         // constructor(width, height, img, x, y) {
-        if (myGameArea.frames % 400 === 0) {
+        if (myGameArea.frames % 350 === 0) {
             let x = myGameArea.canvas.width;
             let y = myGameArea.canvas.height;
             let randomHeight = Math.floor(Math.random() * (x - 50)) + 50;
-            myitemTank.push(new Component(80, 90, "./imagenes/tanque.png", randomHeight, y));
+            myitemTank.push(new Component(60, 70, "./imagenes/tanque.png", randomHeight, y));
         }
     }
 }
-/* function checkItems() {
-    const crashedItemLife = myitemTank.filter(function (obstacle) {
+function updateItemShield() {
+    const crashedItemShield = myItemShield.some(function (obstacle) {
         return player.crashWith(obstacle);
     });
-    if (crashedItemLife) {
-        console.log(crashedItemLife);
+    if (crashedItemShield) {
+        shieldTime += 300;
+        const diverRaw = new Image();
+        diverRaw.src = "./imagenes/burbuja.png";
+        player.changeImage(diverRaw);
+        let filter = myItemShield.filter(function (obstacle) {
+            return player.crashWith(obstacle);
+        });
+        let index = myItemShield.indexOf(filter[0]);
+        myItemShield.splice(index, 1);
+    } else {
+        if(shieldTime>0) {
+            shieldTime--;
+            myGameArea.context.font = "40px Arial";
+            myGameArea.context.fillText(`Escudo:${shieldTime}`,500,60)
+        } 
+        if(shieldTime===0) {
+            const diverRaw = new Image();
+            diverRaw.src = "./imagenes/buzo.png";
+            player.changeImage(diverRaw);
+        }
+        for (i = 0; i < myItemShield.length; i++) {
+            myItemShield[i].y += -1;
+            myItemShield[i].update();
+        }
+        // constructor(width, height, img, x, y) {
+        if (myGameArea.frames % 1000 === 0) {
+            let x = myGameArea.canvas.width;
+            let y = myGameArea.canvas.height;
+            let randomHeight = Math.floor(Math.random() * (x - 50)) + 50;
+            myItemShield.push(new Component(100, 70, "./imagenes/shield.png", randomHeight, y));
+        }
     }
-} */
+}
+// Funcion de GameOver
 function checkGameOver() {
-    const crashedTronco = myObstaclesTronco.some(function (obstacle) {
+    const crashedShark = myObstaclesShark.some(function (obstacle) {
         return player.crashWith(obstacle);
     });
-    const crashedMedusa = myObstaclesMedusa.some(function (obstacle) {
-        return player.crashWith(obstacle);
-    });
-    if (crashedTronco || crashedMedusa) {
+    if (player.life === 0 || (crashedShark && shieldTime===0)) {
         myGameArea.stop();
+        myGameArea.clear();
+        myGameArea.context.font = '100px Arial';
+        myGameArea.context.fillText('Game Over', 350, 325);
+         let btn = document.createElement('BUTTON');
+       btn.innerHTML = 'Juego Nuevo';
+        btn.style.backgroundColor = '#FFFF99'
+        board.appendChild(btn)
+        btn.addEventListener('click', () => {
+            location.reload()
+        }) 
     }
 }

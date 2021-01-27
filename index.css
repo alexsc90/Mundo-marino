@@ -33,7 +33,11 @@ ul {
 }
 
 .game-intro > section:first-child {
-    margin-left: 100px;
+    margin-left: 50px;
+}
+
+.game-intro > section:last-child {
+    margin-right: 50px;
 }
 
 #jugador {
