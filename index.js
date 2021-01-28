@@ -1,7 +1,7 @@
 const fondo = document.getElementById('fondo')
 const btn = document.getElementById('iniciar-juego')
 const board = document.getElementById('game-board')
-//const body = document.querySelector("body")
+
 btn.addEventListener('click', () => {
     fondo.style.display = 'none'
     board.style.display = 'flex'
@@ -172,7 +172,7 @@ function updateGameArea() {
     changeDificulty();
     // check if the game should stop
     checkGameOver();
-    // update and draw the score
+
 }
 document.onkeydown = function (e) {
     switch (e.keyCode) {
@@ -195,7 +195,7 @@ document.onkeyup = function (e) {
     player.speedX = 0;
     player.speedY = 0;
 };
-// Funcion de Obstaculos
+// Funciones de Obstaculos
 function updateObstaclesTronco(frame) {
     const crashedTronco = myObstaclesTronco.some(function (obstacle) {
         return player.crashWith(obstacle);
@@ -212,7 +212,7 @@ function updateObstaclesTronco(frame) {
             myObstaclesTronco[i].x += -1;
             myObstaclesTronco[i].update();
         }
-        // constructor(width, height, img, x, y) {
+        
         myGameArea.frames += 1;
         if (myGameArea.frames % frame === 0) {
             let x = myGameArea.canvas.width;
@@ -238,7 +238,7 @@ function updateObstaclesMedusa(frame) {
             myObstaclesMedusa[i].y += -1;
             myObstaclesMedusa[i].update();
         }
-        // constructor(width, height, img, x, y) {
+        
         if (myGameArea.frames % frame === 0) {
             let x = myGameArea.canvas.width;
             let y = myGameArea.canvas.height;
@@ -252,7 +252,7 @@ function upadateObstaclesShark(frame) {
         myObstaclesShark[i].x += 1;
         myObstaclesShark[i].update();
     }
-    // constructor(width, height, img, x, y) {
+    
     if (myGameArea.frames % frame === 0) {
         let x = myGameArea.canvas.width;
         let y = myGameArea.canvas.height;
@@ -276,7 +276,7 @@ function updateObstaclesAncla(frame) {
             myObstaclesAncla[i].y += 1;
             myObstaclesAncla[i].update();
         }
-        // constructor(width, height, img, x, y) {
+        
         if (myGameArea.frames % frame === 0) {
             let x = myGameArea.canvas.width;
             let y = myGameArea.canvas.height;
@@ -302,7 +302,7 @@ function updateItemTank() {
             myitemTank[i].y += -1;
             myitemTank[i].update();
         }
-        // constructor(width, height, img, x, y) {
+    
         if (myGameArea.frames % 200 === 0) {
             let x = myGameArea.canvas.width;
             let y = myGameArea.canvas.height;
@@ -336,7 +336,7 @@ function updateItemShield(frame) {
             myItemShield[i].y += -1;
             myItemShield[i].update();
         }
-        // constructor(width, height, img, x, y) {
+    
         if (myGameArea.frames % frame === 0) {
             let x = myGameArea.canvas.width;
             let y = myGameArea.canvas.height;
@@ -374,7 +374,7 @@ function updateItemStar(frame) {
             myItemStar[i].y += 1;
             myItemStar[i].update();
         }
-        // constructor(width, height, img, x, y) {
+        
         if (myGameArea.frames % frame === 0) {
             let x = myGameArea.canvas.width;
             let y = myGameArea.canvas.height;
@@ -429,6 +429,6 @@ function checkGameOver() {
             window.location.reload()
         })
         audio.pause();
-        audioDiver.pause();
+    
     }
 }
