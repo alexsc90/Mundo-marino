@@ -34,7 +34,7 @@ const myGameArea = {
     speed: -3,
     img: fondoRaw,
     start: function () {
-        this.canvas.width = 1360;
+        this.canvas.width = 1365;
         this.canvas.height = 655;
         this.context = this.canvas.getContext("2d");
         // call updateGameArea() every 20 milliseconds
@@ -48,14 +48,14 @@ const myGameArea = {
     },
     score: function () {
         const points = Math.floor(this.frames / 5);
-        this.context.font = "18px serif";
-        this.context.fillStyle = "black";
+        this.context.font = "bold 30px serif";
+        this.context.fillStyle = "#ff9900";
         this.context.fillText(`Puntaje: ${points}`, 350, 50);
         return points;
     },
     life: function (health) {
         this.context.font = "30px serif";
-        this.context.fillStyle = "black";
+        this.context.fillStyle = "#ff0066";
         this.context.fillText(`Tu aire:${health}`, 150, 50);
     },
     draw: function () {
@@ -130,7 +130,9 @@ class Diver extends Component {
     reduceLiveByImpact(percentage) {
         this.life = Math.ceil(this.life * percentage);
     }
-    changeImage(image) {
+    changeImage(image, width, height) {
+        this.width = width;
+        this.height = height;
         this.diverImg = image;
     }
     draw() {
@@ -174,13 +176,14 @@ function updateGameArea() {
     updateItemShield();
     updateItemTank();
     updateItemStar();
+    changeDificulty();
     // check if the game should stop
     player.reduceLive();
     myGameArea.life(player.life);
     checkGameOver();
     // update and draw the score
     myGameArea.score();
-    changeDificulty()
+    
 }
 document.onkeydown = function (e) {
     switch (e.keyCode) {
@@ -288,8 +291,8 @@ function updateObstaclesAncla() {
         if (myGameArea.frames % 600 === 0) {
             let x = myGameArea.canvas.width;
             let y = myGameArea.canvas.height;
-            let randomHeight = Math.floor(Math.random() * (x - 50)) + 50;
-            myObstaclesAncla.push(new Component(50, 60, "./imagenes/ancla.png", randomHeight, -60));
+            let randomHeight = Math.floor(Math.random() * (x - 60)) + 50;
+            myObstaclesAncla.push(new Component(50, 60, "./imagenes/ancla.png", randomHeight, -70));
         }
     }
 }
@@ -314,7 +317,7 @@ function updateItemTank() {
         if (myGameArea.frames % 200 === 0) {
             let x = myGameArea.canvas.width;
             let y = myGameArea.canvas.height;
-            let randomHeight = Math.floor(Math.random() * (x - 100)) + 50;
+            let randomHeight = Math.floor(Math.random() * (x - 110)) + 50;
             myitemTank.push(new Component(60, 70, "./imagenes/tanque.png", randomHeight, y));
         }
     }
@@ -327,7 +330,7 @@ function updateItemShield() {
         shieldTime += 300;
         const diverRaw = new Image();
         diverRaw.src = "./imagenes/burbuja.png";
-        player.changeImage(diverRaw);
+        player.changeImage(diverRaw, 150, 100);
         let filter = myItemShield.filter(function (obstacle) {
             return player.crashWith(obstacle);
         });
@@ -336,14 +339,14 @@ function updateItemShield() {
     } else {
         if(shieldTime>0) {
             shieldTime--;
+            myGameArea.context.fillStyle = 'red'
             myGameArea.context.font = "40px Arial";
-            myGameArea.context.fillText(`Escudo:${shieldTime}`,500,60)
-            
+            myGameArea.context.fillText(`Escudo: ${shieldTime}`,500,200)
         } 
         if(shieldTime===0 && starTime===0) {
             const diverRaw = new Image();
             diverRaw.src = "./imagenes/buzo.png";
-            player.changeImage(diverRaw);
+            player.changeImage(diverRaw, 100, 50);
         }
         for (i = 0; i < myItemShield.length; i++) {
             myItemShield[i].y += -1;
@@ -353,7 +356,7 @@ function updateItemShield() {
         if (myGameArea.frames % 1000 === 0) {
             let x = myGameArea.canvas.width;
             let y = myGameArea.canvas.height;
-            let randomHeight = Math.floor(Math.random() * (x - 100)) + 50;
+            let randomHeight = Math.floor(Math.random() * (x - 110)) + 50;
             myItemShield.push(new Component(100, 90, "./imagenes/shield.png", randomHeight, y));
         }
     }
@@ -366,7 +369,7 @@ function updateItemStar() {
         starTime += 300;
         const diverRaw = new Image();
         diverRaw.src = "./imagenes/energía.png";
-        player.changeImage(diverRaw); 
+        player.changeImage(diverRaw, 150, 100); 
         myGameArea.speed = -10;
         let filter = myItemStar.filter(function (obstacle) {
             return player.crashWith(obstacle);
@@ -381,7 +384,7 @@ function updateItemStar() {
         if(starTime===0 && shieldTime===0) {
             const diverRaw = new Image();
             diverRaw.src = "./imagenes/buzo.png";
-            player.changeImage(diverRaw);
+            player.changeImage(diverRaw, 100, 50);
             myGameArea.speed = -3;
         }
         for (i = 0; i < myItemStar.length; i++) {
@@ -393,14 +396,14 @@ function updateItemStar() {
             let x = myGameArea.canvas.width;
             let y = myGameArea.canvas.height;
             let randomHeight = Math.floor(Math.random() * (x - 100)) + 50;
-            myItemStar.push(new Component(90, 70, "./imagenes/starfish.png", randomHeight, 0));
+            myItemStar.push(new Component(90, 70, "./imagenes/starfish.png", randomHeight, -70));
         }
     }
 }
 // Funcion para Actualizar el juego
 function changeDificulty(){
-    console.log(myGameArea.score());
-    if(myGameArea.score() >1500){
+    
+    if(myGameArea.score() > 1500){
         myGameArea.img =fondoNegro;
     }
 }
@@ -421,5 +424,6 @@ function checkGameOver() {
         btn.addEventListener('click', () => {
             window.location.reload()
         }) 
+        audio.pause()
     }
 }
