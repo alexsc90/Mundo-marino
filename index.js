@@ -169,21 +169,10 @@ function updateGameArea() {
     player.newPos();
     player.draw();
     // update the obstacles array
-    updateObstaclesTronco();
-    updateObstaclesMedusa();
-    upadateObstaclesShark();
-    updateObstaclesAncla();
-    updateItemShield();
-    updateItemTank();
-    updateItemStar();
     changeDificulty();
     // check if the game should stop
-    player.reduceLive();
-    myGameArea.life(player.life);
     checkGameOver();
     // update and draw the score
-    myGameArea.score();
-    
 }
 document.onkeydown = function (e) {
     switch (e.keyCode) {
@@ -207,11 +196,11 @@ document.onkeyup = function (e) {
     player.speedY = 0;
 };
 // Funcion de Obstaculos
-function updateObstaclesTronco() {
+function updateObstaclesTronco(frame) {
     const crashedTronco = myObstaclesTronco.some(function (obstacle) {
         return player.crashWith(obstacle);
     });
-    if (crashedTronco && shieldTime===0) {
+    if (crashedTronco && shieldTime === 0) {
         player.reduceLiveByImpact(0.9);
         let filter = myObstaclesTronco.filter(function (obstacle) {
             return player.crashWith(obstacle);
@@ -225,7 +214,7 @@ function updateObstaclesTronco() {
         }
         // constructor(width, height, img, x, y) {
         myGameArea.frames += 1;
-        if (myGameArea.frames % 250 === 0) {
+        if (myGameArea.frames % frame === 0) {
             let x = myGameArea.canvas.width;
             let y = myGameArea.canvas.height;
             let randomHeight = Math.floor(Math.random() * (y - 100)) + 50;
@@ -233,11 +222,11 @@ function updateObstaclesTronco() {
         }
     }
 }
-function updateObstaclesMedusa() {
+function updateObstaclesMedusa(frame) {
     const crashedMedusa = myObstaclesMedusa.some(function (obstacle) {
         return player.crashWith(obstacle);
     });
-    if (crashedMedusa && shieldTime===0) {
+    if (crashedMedusa && shieldTime === 0) {
         player.reduceLiveByImpact(0.5);
         let filter = myObstaclesMedusa.filter(function (obstacle) {
             return player.crashWith(obstacle);
@@ -250,7 +239,7 @@ function updateObstaclesMedusa() {
             myObstaclesMedusa[i].update();
         }
         // constructor(width, height, img, x, y) {
-        if (myGameArea.frames % 800 === 0) {
+        if (myGameArea.frames % frame === 0) {
             let x = myGameArea.canvas.width;
             let y = myGameArea.canvas.height;
             let randomHeight = Math.floor(Math.random() * (x - 50)) + 50;
@@ -258,24 +247,24 @@ function updateObstaclesMedusa() {
         }
     }
 }
-function upadateObstaclesShark() {
+function upadateObstaclesShark(frame) {
     for (i = 0; i < myObstaclesShark.length; i++) {
         myObstaclesShark[i].x += 1;
         myObstaclesShark[i].update();
     }
     // constructor(width, height, img, x, y) {
-    if (myGameArea.frames % 1500 === 0) {
+    if (myGameArea.frames % frame === 0) {
         let x = myGameArea.canvas.width;
         let y = myGameArea.canvas.height;
         let randomHeight = Math.floor(Math.random() * (y - 200)) + 50;
         myObstaclesShark.push(new Component(400, 150, "./imagenes/shark.png", -400, randomHeight));
     }
 }
-function updateObstaclesAncla() {
+function updateObstaclesAncla(frame) {
     const crashedAncla = myObstaclesAncla.some(function (obstacle) {
         return player.crashWith(obstacle);
     });
-    if (crashedAncla && shieldTime===0) {
+    if (crashedAncla && shieldTime === 0) {
         player.reduceLiveByImpact(0.75);
         let filter = myObstaclesAncla.filter(function (obstacle) {
             return player.crashWith(obstacle);
@@ -288,7 +277,7 @@ function updateObstaclesAncla() {
             myObstaclesAncla[i].update();
         }
         // constructor(width, height, img, x, y) {
-        if (myGameArea.frames % 600 === 0) {
+        if (myGameArea.frames % frame === 0) {
             let x = myGameArea.canvas.width;
             let y = myGameArea.canvas.height;
             let randomHeight = Math.floor(Math.random() * (x - 60)) + 50;
@@ -322,7 +311,7 @@ function updateItemTank() {
         }
     }
 }
-function updateItemShield() {
+function updateItemShield(frame) {
     const crashedItemShield = myItemShield.some(function (obstacle) {
         return player.crashWith(obstacle);
     });
@@ -330,30 +319,25 @@ function updateItemShield() {
         shieldTime += 300;
         const diverRaw = new Image();
         diverRaw.src = "./imagenes/burbuja.png";
-        player.changeImage(diverRaw, 150, 100);
+        player.changeImage(diverRaw, 140, 80);
         let filter = myItemShield.filter(function (obstacle) {
             return player.crashWith(obstacle);
         });
         let index = myItemShield.indexOf(filter[0]);
         myItemShield.splice(index, 1);
     } else {
-        if(shieldTime>0) {
+        if (shieldTime > 0) {
             shieldTime--;
             myGameArea.context.fillStyle = 'red'
             myGameArea.context.font = "40px Arial";
-            myGameArea.context.fillText(`Escudo: ${shieldTime}`,500,200)
-        } 
-        if(shieldTime===0 && starTime===0) {
-            const diverRaw = new Image();
-            diverRaw.src = "./imagenes/buzo.png";
-            player.changeImage(diverRaw, 100, 50);
+            myGameArea.context.fillText(`Escudo: ${shieldTime}`, 500, 200)
         }
         for (i = 0; i < myItemShield.length; i++) {
             myItemShield[i].y += -1;
             myItemShield[i].update();
         }
         // constructor(width, height, img, x, y) {
-        if (myGameArea.frames % 1000 === 0) {
+        if (myGameArea.frames % frame === 0) {
             let x = myGameArea.canvas.width;
             let y = myGameArea.canvas.height;
             let randomHeight = Math.floor(Math.random() * (x - 110)) + 50;
@@ -361,7 +345,7 @@ function updateItemShield() {
         }
     }
 }
-function updateItemStar() {
+function updateItemStar(frame) {
     const crashedItemShield = myItemStar.some(function (obstacle) {
         return player.crashWith(obstacle);
     });
@@ -369,7 +353,7 @@ function updateItemStar() {
         starTime += 300;
         const diverRaw = new Image();
         diverRaw.src = "./imagenes/energía.png";
-        player.changeImage(diverRaw, 150, 100); 
+        player.changeImage(diverRaw, 140, 80);
         myGameArea.speed = -10;
         let filter = myItemStar.filter(function (obstacle) {
             return player.crashWith(obstacle);
@@ -377,22 +361,21 @@ function updateItemStar() {
         let index = myItemStar.indexOf(filter[0]);
         myItemStar.splice(index, 1);
     } else {
-        if(starTime>0) {
+        if (starTime > 0) {
             starTime--;
             myGameArea.frames += 2;
-        } 
-        if(starTime===0 && shieldTime===0) {
+        }
+        if (starTime === 0 && shieldTime === 0) {
             const diverRaw = new Image();
             diverRaw.src = "./imagenes/buzo.png";
             player.changeImage(diverRaw, 100, 50);
-            myGameArea.speed = -3;
         }
         for (i = 0; i < myItemStar.length; i++) {
             myItemStar[i].y += 1;
             myItemStar[i].update();
         }
         // constructor(width, height, img, x, y) {
-        if (myGameArea.frames % 1500 === 0) {
+        if (myGameArea.frames % frame === 0) {
             let x = myGameArea.canvas.width;
             let y = myGameArea.canvas.height;
             let randomHeight = Math.floor(Math.random() * (x - 100)) + 50;
@@ -401,10 +384,29 @@ function updateItemStar() {
     }
 }
 // Funcion para Actualizar el juego
-function changeDificulty(){
-    
-    if(myGameArea.score() > 1500){
-        myGameArea.img =fondoNegro;
+function changeDificulty() {
+    player.reduceLive();
+    myGameArea.life(player.life);
+    myGameArea.score();
+    if (myGameArea.score() < 1500) {
+        if(starTime === 0 && shieldTime === 0) myGameArea.speed = -3;
+        updateObstaclesTronco(250);
+        updateObstaclesMedusa(800);
+        upadateObstaclesShark(1500);
+        updateObstaclesAncla(600);
+        updateItemTank();
+        updateItemStar(900);
+        updateItemShield(1400)
+    } else if (myGameArea.score() >= 1500) {
+        myGameArea.speed = -10;
+        myGameArea.img = fondoNegro;
+        updateObstaclesTronco(175);
+        updateObstaclesMedusa(550);
+        upadateObstaclesShark(1300);
+        updateObstaclesAncla(400);
+        updateItemTank();
+        updateItemShield(1250);
+        updateItemStar(5000);
     }
 }
 // Funcion de GameOver
@@ -412,9 +414,11 @@ function checkGameOver() {
     const crashedShark = myObstaclesShark.some(function (obstacle) {
         return player.crashWith(obstacle);
     });
-    if (player.life === 0 || (crashedShark && shieldTime===0)) {
+    if (player.life === 0 || (crashedShark && shieldTime === 0)) {
         myGameArea.stop();
         myGameArea.clear();
+        myGameArea.score();
+        myGameArea.context.fillStyle = "#ff0066";
         myGameArea.context.font = '100px Arial';
         myGameArea.context.fillText('Game Over', 425, 325);
         let btn = document.createElement('button');
@@ -423,7 +427,8 @@ function checkGameOver() {
         board.appendChild(btn)
         btn.addEventListener('click', () => {
             window.location.reload()
-        }) 
-        audio.pause()
+        })
+        audio.pause();
+        audioDiver.pause();
     }
 }
