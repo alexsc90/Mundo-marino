@@ -1,34 +1,40 @@
 const fondo = document.getElementById('fondo')
 const btn = document.getElementById('iniciar-juego')
 const board = document.getElementById('game-board')
-
+//const body = document.querySelector("body")
 btn.addEventListener('click', () => {
     fondo.style.display = 'none'
     board.style.display = 'flex'
-    board.style.position = 'relative'
+    board.style.position = 'relative';
     myGameArea.start();
-
-})
-
+    audio.play();
+});
+// variables declaradas
 let myObstaclesTronco = [];
 let myObstaclesMedusa = [];
 let myObstaclesAncla = [];
 let myitemTank = [];
 let myObstaclesShark = [];
 let myItemShield = [];
+let myItemStar = [];
 let shieldTime = 0;
+let starTime = 0;
+let audio = new Audio('./music/musica-general.mp3');
+let audioDiver = new Audio("./music/burbuja.mp3")
+const fondoNegro = new Image();
+fondoNegro.src = "./imagenes/FondoNegro.png";
 // Iniciar el area de Juego con Fondo
-const imgRaw = new Image();
-imgRaw.src = "./imagenes/fondo-marino.jpg";
+const fondoRaw = new Image();
+fondoRaw.src = "./imagenes/fondo-marino.jpg";
 const myGameArea = {
     canvas: document.getElementById("canvas"),
     frames: 0,
     x: 0,
     y: 0,
     speed: -3,
-    img: imgRaw,
+    img: fondoRaw,
     start: function () {
-        this.canvas.width = 1300;
+        this.canvas.width = 1360;
         this.canvas.height = 655;
         this.context = this.canvas.getContext("2d");
         // call updateGameArea() every 20 milliseconds
@@ -45,6 +51,7 @@ const myGameArea = {
         this.context.font = "18px serif";
         this.context.fillStyle = "black";
         this.context.fillText(`Puntaje: ${points}`, 350, 50);
+        return points;
     },
     life: function (health) {
         this.context.font = "30px serif";
@@ -163,24 +170,26 @@ function updateGameArea() {
     updateObstaclesTronco();
     updateObstaclesMedusa();
     upadateObstaclesShark();
-    updateObstaclesAncla()
+    updateObstaclesAncla();
     updateItemShield();
     updateItemTank();
+    updateItemStar();
     // check if the game should stop
     player.reduceLive();
     myGameArea.life(player.life);
     checkGameOver();
     // update and draw the score
     myGameArea.score();
+    changeDificulty()
 }
-
 document.onkeydown = function (e) {
     switch (e.keyCode) {
         case 38: // up arrow
-            player.moveUp()
+            player.moveUp();
+            audioDiver.play();
             break;
         case 40: // down arrow
-            player.moveDown()
+            player.moveDown();
             break;
         case 37: // left arrow
             player.moveLeft();
@@ -213,10 +222,10 @@ function updateObstaclesTronco() {
         }
         // constructor(width, height, img, x, y) {
         myGameArea.frames += 1;
-        if (myGameArea.frames % 300 === 0) {
+        if (myGameArea.frames % 250 === 0) {
             let x = myGameArea.canvas.width;
             let y = myGameArea.canvas.height;
-            let randomHeight = Math.floor(Math.random() * (y - 50)) + 50;
+            let randomHeight = Math.floor(Math.random() * (y - 100)) + 50;
             myObstaclesTronco.push(new Component(120, 60, "./imagenes/tronco.png", x, randomHeight));
         }
     }
@@ -238,7 +247,7 @@ function updateObstaclesMedusa() {
             myObstaclesMedusa[i].update();
         }
         // constructor(width, height, img, x, y) {
-        if (myGameArea.frames % 1000 === 0) {
+        if (myGameArea.frames % 800 === 0) {
             let x = myGameArea.canvas.width;
             let y = myGameArea.canvas.height;
             let randomHeight = Math.floor(Math.random() * (x - 50)) + 50;
@@ -276,7 +285,7 @@ function updateObstaclesAncla() {
             myObstaclesAncla[i].update();
         }
         // constructor(width, height, img, x, y) {
-        if (myGameArea.frames % 750 === 0) {
+        if (myGameArea.frames % 600 === 0) {
             let x = myGameArea.canvas.width;
             let y = myGameArea.canvas.height;
             let randomHeight = Math.floor(Math.random() * (x - 50)) + 50;
@@ -302,10 +311,10 @@ function updateItemTank() {
             myitemTank[i].update();
         }
         // constructor(width, height, img, x, y) {
-        if (myGameArea.frames % 350 === 0) {
+        if (myGameArea.frames % 200 === 0) {
             let x = myGameArea.canvas.width;
             let y = myGameArea.canvas.height;
-            let randomHeight = Math.floor(Math.random() * (x - 50)) + 50;
+            let randomHeight = Math.floor(Math.random() * (x - 100)) + 50;
             myitemTank.push(new Component(60, 70, "./imagenes/tanque.png", randomHeight, y));
         }
     }
@@ -329,8 +338,9 @@ function updateItemShield() {
             shieldTime--;
             myGameArea.context.font = "40px Arial";
             myGameArea.context.fillText(`Escudo:${shieldTime}`,500,60)
+            
         } 
-        if(shieldTime===0) {
+        if(shieldTime===0 && starTime===0) {
             const diverRaw = new Image();
             diverRaw.src = "./imagenes/buzo.png";
             player.changeImage(diverRaw);
@@ -343,9 +353,55 @@ function updateItemShield() {
         if (myGameArea.frames % 1000 === 0) {
             let x = myGameArea.canvas.width;
             let y = myGameArea.canvas.height;
-            let randomHeight = Math.floor(Math.random() * (x - 50)) + 50;
-            myItemShield.push(new Component(100, 70, "./imagenes/shield.png", randomHeight, y));
+            let randomHeight = Math.floor(Math.random() * (x - 100)) + 50;
+            myItemShield.push(new Component(100, 90, "./imagenes/shield.png", randomHeight, y));
         }
+    }
+}
+function updateItemStar() {
+    const crashedItemShield = myItemStar.some(function (obstacle) {
+        return player.crashWith(obstacle);
+    });
+    if (crashedItemShield) {
+        starTime += 300;
+        const diverRaw = new Image();
+        diverRaw.src = "./imagenes/energía.png";
+        player.changeImage(diverRaw); 
+        myGameArea.speed = -10;
+        let filter = myItemStar.filter(function (obstacle) {
+            return player.crashWith(obstacle);
+        });
+        let index = myItemStar.indexOf(filter[0]);
+        myItemStar.splice(index, 1);
+    } else {
+        if(starTime>0) {
+            starTime--;
+            myGameArea.frames += 2;
+        } 
+        if(starTime===0 && shieldTime===0) {
+            const diverRaw = new Image();
+            diverRaw.src = "./imagenes/buzo.png";
+            player.changeImage(diverRaw);
+            myGameArea.speed = -3;
+        }
+        for (i = 0; i < myItemStar.length; i++) {
+            myItemStar[i].y += 1;
+            myItemStar[i].update();
+        }
+        // constructor(width, height, img, x, y) {
+        if (myGameArea.frames % 1500 === 0) {
+            let x = myGameArea.canvas.width;
+            let y = myGameArea.canvas.height;
+            let randomHeight = Math.floor(Math.random() * (x - 100)) + 50;
+            myItemStar.push(new Component(90, 70, "./imagenes/starfish.png", randomHeight, 0));
+        }
+    }
+}
+// Funcion para Actualizar el juego
+function changeDificulty(){
+    console.log(myGameArea.score());
+    if(myGameArea.score() >1500){
+        myGameArea.img =fondoNegro;
     }
 }
 // Funcion de GameOver
@@ -357,13 +413,13 @@ function checkGameOver() {
         myGameArea.stop();
         myGameArea.clear();
         myGameArea.context.font = '100px Arial';
-        myGameArea.context.fillText('Game Over', 350, 325);
-         let btn = document.createElement('BUTTON');
-       btn.innerHTML = 'Juego Nuevo';
-        btn.style.backgroundColor = '#FFFF99'
+        myGameArea.context.fillText('Game Over', 425, 325);
+        let btn = document.createElement('button');
+        btn.innerHTML = 'Juego Nuevo';
+        btn.classList.add('reiniciar')
         board.appendChild(btn)
         btn.addEventListener('click', () => {
-            location.reload()
+            window.location.reload()
         }) 
     }
 }
