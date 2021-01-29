@@ -388,7 +388,7 @@ function changeDificulty() {
     player.reduceLive();
     myGameArea.life(player.life);
     myGameArea.score();
-    if (myGameArea.score() < 1500) {
+    if (myGameArea.score() < 1000) {
         if(starTime === 0 && shieldTime === 0) myGameArea.speed = -3;
         updateObstaclesTronco(250);
         updateObstaclesMedusa(800);
@@ -397,7 +397,7 @@ function changeDificulty() {
         updateItemTank();
         updateItemStar(900);
         updateItemShield(1400)
-    } else if (myGameArea.score() >= 1500) {
+    } else if (myGameArea.score() >= 1000) {
         myGameArea.speed = -10;
         myGameArea.img = fondoNegro;
         updateObstaclesTronco(175);
@@ -429,6 +429,5 @@ function checkGameOver() {
             window.location.reload()
         })
         audio.pause();
-    
     }
 }
