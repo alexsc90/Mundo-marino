@@ -1,15 +1,3 @@
-const fondo = document.getElementById('fondo')
-const btn = document.getElementById('iniciar-juego')
-const board = document.getElementById('game-board')
-
-btn.addEventListener('click', () => {
-    fondo.style.display = 'none'
-    board.style.display = 'flex'
-    board.style.position = 'relative';
-    myGameArea.start();
-    audio.play();
-});
-// variables declaradas
 let myObstaclesTronco = [];
 let myObstaclesMedusa = [];
 let myObstaclesAncla = [];
@@ -49,13 +37,13 @@ const myGameArea = {
     score: function () {
         const points = Math.floor(this.frames / 5);
         this.context.font = "bold 30px serif";
-        this.context.fillStyle = "#ff9900";
+        this.context.fillStyle = "#FF9900";
         this.context.fillText(`Puntaje: ${points}`, 350, 50);
         return points;
     },
     life: function (health) {
         this.context.font = "30px serif";
-        this.context.fillStyle = "#ff0066";
+        this.context.fillStyle = "#FF0066";
         this.context.fillText(`Tu aire:${health}`, 150, 50);
     },
     draw: function () {
@@ -67,135 +55,8 @@ const myGameArea = {
         this.x %= this.canvas.width;
     }
 };
-class Component {
-    constructor(width, height, img, x, y) {
-        this.width = width;
-        this.height = height;
-        this.img = img;
-        this.x = x;
-        this.y = y;
-        // new speed properties
-        this.speedX = 0;
-        this.speedY = 0;
-        const diverRaw = new Image();
-        diverRaw.src = this.img;
-        this.diverImg = diverRaw;
-    }
-    update() {
-        let ctx = myGameArea.context;
-        ctx.fillStyle = this.color;
-        ctx.drawImage(this.diverImg, this.x, this.y, this.width, this.height);
-    }
-    newPos() {
-        this.x = this.x;
-        this.y = this.y;
-    }
-    left() {
-        return this.x;
-    }
-    right() {
-        return this.x + this.width;
-    }
-    top() {
-        return this.y;
-    }
-    bottom() {
-        return this.y + this.height;
-    }
-    crashWith(obstacle) {
-        return !(
-            this.bottom() < obstacle.top() ||
-            this.top() > obstacle.bottom() ||
-            this.right() < obstacle.left() ||
-            this.left() > obstacle.right()
-        );
-    }
-}
-class Diver extends Component {
-    constructor(width, height, img, x, y) {
-        super(width, height, img, x, y);
-        this.life = 100;
-        const diverRaw = new Image();
-        diverRaw.src = this.img;
-        this.diverImg = diverRaw;
-    }
-    reduceLive() {
-        if (myGameArea.frames % 20 === 0) {
-            this.life--;
-        }
-    }
-    increaseLive() {
-        this.life += 10;
-    }
-    reduceLiveByImpact(percentage) {
-        this.life = Math.ceil(this.life * percentage);
-    }
-    changeImage(image, width, height) {
-        this.width = width;
-        this.height = height;
-        this.diverImg = image;
-    }
-    draw() {
-        let ctx = myGameArea.context;
-        ctx.drawImage(this.diverImg, this.x, this.y, this.width, this.height);
-    }
-    moveLeft() {
-        if (this.x > 0) {
-            this.x -= 10;
-        }
-    }
-    moveRight() {
-        if (this.x < 1200) {
-            this.x += 10;
-        }
-    }
-    moveUp() {
-        if (this.y > 0) {
-            this.y -= 10;
-        }
-    }
-    moveDown() {
-        if (this.y < 585) {
-            this.y += 10;
-        }
-    }
-}
-const player = new Diver(100, 50, "./imagenes/buzo.png", 300, 300);
-function updateGameArea() {
-    myGameArea.move();
-    myGameArea.clear();
-    myGameArea.draw();
-    // update the player's position before drawing
-    player.newPos();
-    player.draw();
-    // update the obstacles array
-    changeDificulty();
-    // check if the game should stop
-    checkGameOver();
-
-}
-document.onkeydown = function (e) {
-    switch (e.keyCode) {
-        case 38: // up arrow
-            player.moveUp();
-            audioDiver.play();
-            break;
-        case 40: // down arrow
-            player.moveDown();
-            break;
-        case 37: // left arrow
-            player.moveLeft();
-            break;
-        case 39: // right arrow
-            player.moveRight();
-            break;
-    }
-};
-document.onkeyup = function (e) {
-    player.speedX = 0;
-    player.speedY = 0;
-};
-// Funciones de Obstaculos
+const player = new Diver(100, 50, "./imagenes/buzo.png", 300, 300); 
+// FUNCIONES 
 function updateObstaclesTronco(frame) {
     const crashedTronco = myObstaclesTronco.some(function (obstacle) {
         return player.crashWith(obstacle);
@@ -212,7 +73,6 @@ function updateObstaclesTronco(frame) {
             myObstaclesTronco[i].x += -1;
             myObstaclesTronco[i].update();
         }
-        
         myGameArea.frames += 1;
         if (myGameArea.frames % frame === 0) {
             let x = myGameArea.canvas.width;
@@ -238,7 +98,6 @@ function updateObstaclesMedusa(frame) {
             myObstaclesMedusa[i].y += -1;
             myObstaclesMedusa[i].update();
         }
-        
         if (myGameArea.frames % frame === 0) {
             let x = myGameArea.canvas.width;
             let y = myGameArea.canvas.height;
@@ -252,7 +111,6 @@ function upadateObstaclesShark(frame) {
         myObstaclesShark[i].x += 1;
         myObstaclesShark[i].update();
     }
-    
     if (myGameArea.frames % frame === 0) {
         let x = myGameArea.canvas.width;
         let y = myGameArea.canvas.height;
@@ -276,7 +134,6 @@ function updateObstaclesAncla(frame) {
             myObstaclesAncla[i].y += 1;
             myObstaclesAncla[i].update();
         }
-        
         if (myGameArea.frames % frame === 0) {
             let x = myGameArea.canvas.width;
             let y = myGameArea.canvas.height;
@@ -302,7 +159,6 @@ function updateItemTank() {
             myitemTank[i].y += -1;
             myitemTank[i].update();
         }
-    
         if (myGameArea.frames % 200 === 0) {
             let x = myGameArea.canvas.width;
             let y = myGameArea.canvas.height;
@@ -336,7 +192,6 @@ function updateItemShield(frame) {
             myItemShield[i].y += -1;
             myItemShield[i].update();
         }
-    
         if (myGameArea.frames % frame === 0) {
             let x = myGameArea.canvas.width;
             let y = myGameArea.canvas.height;
@@ -374,7 +229,6 @@ function updateItemStar(frame) {
             myItemStar[i].y += 1;
             myItemStar[i].update();
         }
-        
         if (myGameArea.frames % frame === 0) {
             let x = myGameArea.canvas.width;
             let y = myGameArea.canvas.height;
@@ -383,7 +237,6 @@ function updateItemStar(frame) {
         }
     }
 }
-// Funcion para Actualizar el juego
 function changeDificulty() {
     player.reduceLive();
     myGameArea.life(player.life);
@@ -409,7 +262,6 @@ function changeDificulty() {
         updateItemStar(5000);
     }
 }
-// Funcion de GameOver
 function checkGameOver() {
     const crashedShark = myObstaclesShark.some(function (obstacle) {
         return player.crashWith(obstacle);
@@ -418,7 +270,7 @@ function checkGameOver() {
         myGameArea.stop();
         myGameArea.clear();
         myGameArea.score();
-        myGameArea.context.fillStyle = "#ff0066";
+        myGameArea.context.fillStyle = "#FF0066";
         myGameArea.context.font = '100px Arial';
         myGameArea.context.fillText('Game Over', 425, 325);
         let btn = document.createElement('button');
@@ -431,3 +283,20 @@ function checkGameOver() {
         audio.pause();
     }
 }
+function updateGameArea() {
+    myGameArea.move();
+    myGameArea.clear();
+    myGameArea.draw();
+    // update the player's position before drawing
+    player.newPos();
+    player.draw();
+    // update the obstacles array
+    changeDificulty();
+    // check if the game should stop
+    checkGameOver();
+}
+
+
+
+
+
