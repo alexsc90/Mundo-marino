@@ -36,5 +36,11 @@ Existen dos maneras en las que el juego puede llegar a su fin: quedarte sin aire
 
 Si esto sucede, no te preocupes, siempre puedes comenzar de nuevo haciendo click en el botón: 'Juego Nuevo'.
 
+# Creado con:
+
+- Javascript
+- HTML
+- CSS
+
 # Link.
 https://mundomarino.netlify.app/
